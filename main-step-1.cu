@@ -3,38 +3,17 @@
 
 #define BLOCK_SIZE 32
 
-__global__ void squared_matrix_multiply(float* A, float* B, float* C, int size) {
-    __shared__ float tile_A[BLOCK_SIZE][BLOCK_SIZE];
-    __shared__ float tile_B[BLOCK_SIZE][BLOCK_SIZE];
-
-    int row = blockIdx.y * BLOCK_SIZE + threadIdx.y;
-    int col = blockIdx.x * BLOCK_SIZE + threadIdx.x;
-
-    float value = 0.0f;
-
-    for (int i = 0; i < (size + BLOCK_SIZE - 1) / BLOCK_SIZE; ++i) {
-        // Load tiles into shared memory
-        if (row < size && i * BLOCK_SIZE + threadIdx.x < size)
-            tile_A[threadIdx.y][threadIdx.x] = A[row * size + i * BLOCK_SIZE + threadIdx.x];
-        else
-            tile_A[threadIdx.y][threadIdx.x] = 0.0f;
-
-        if (col < size && i * BLOCK_SIZE + threadIdx.y < size)
-            tile_B[threadIdx.y][threadIdx.x] = B[(i * BLOCK_SIZE + threadIdx.y) * size + col];
-        else
-            tile_B[threadIdx.y][threadIdx.x] = 0.0f;
-
-        __syncthreads();
-
-        // Multiply the tiles
-        for (int j = 0; j < BLOCK_SIZE; ++j)
-            value += tile_A[threadIdx.y][j] * tile_B[j][threadIdx.x];
-
-        __syncthreads();
+__global__ void naive_matrix_multiply(float* A, float* B, float* C, int size) {
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+    
+    if (row < size && col < size) {
+        float sum = 0.0f;
+        for (int k = 0; k < size; k++) {
+            sum += A[row * size + k] * B[k * size + col];
+        }
+        C[row * size + col] = sum;
     }
-
-    if (row < size && col < size)
-        C[row * size + col] = value;
 }
 
 
