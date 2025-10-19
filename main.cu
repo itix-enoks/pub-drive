@@ -10,31 +10,34 @@ __global__ void squared_matrix_multiply(float* A, float* B, float* C, int size){
     int row = blockIdx.y * BLOCK_SIZE + threadIdx.y;
     int col = blockIdx.x * BLOCK_SIZE + threadIdx.x;
 
-    float value = 0.0f;
+    float sum = 0.0f;
 
+    // Loop over tiles
     for (int i = 0; i < (size + BLOCK_SIZE - 1) / BLOCK_SIZE; ++i) {
-        // Load tiles into shared memory
-        if (row < size && i * BLOCK_SIZE + threadIdx.x < size)
+        // Load tile from A into shared memory
+        if (row < size && (i * BLOCK_SIZE + threadIdx.x) < size)
             tile_A[threadIdx.y][threadIdx.x] = A[row * size + i * BLOCK_SIZE + threadIdx.x];
         else
             tile_A[threadIdx.y][threadIdx.x] = 0.0f;
 
-        if (col < size && i * BLOCK_SIZE + threadIdx.y < size)
+        // Load tile from B into shared memory
+        if (col < size && (i * BLOCK_SIZE + threadIdx.y) < size)
             tile_B[threadIdx.y][threadIdx.x] = B[(i * BLOCK_SIZE + threadIdx.y) * size + col];
         else
             tile_B[threadIdx.y][threadIdx.x] = 0.0f;
 
         __syncthreads();
 
-        // Multiply the tiles
+        // Multiply loaded tiles
         for (int j = 0; j < BLOCK_SIZE; ++j)
-            value += tile_A[threadIdx.y][j] * tile_B[j][threadIdx.x];
+            sum += tile_A[threadIdx.y][j] * tile_B[j][threadIdx.x];
 
         __syncthreads();
     }
 
+    // Write result to global memory
     if (row < size && col < size)
-        C[row * size + col] = value;
+        C[row * size + col] = sum;
 }
 
 void matMulCPU(float* A, float* B, float* C, int size) {
