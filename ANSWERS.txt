@@ -1,0 +1,107 @@
+Q1.1
+Each box (node) in factorial.png is a basic block. This means a
+sequence of instructions that runs straight without branching in the
+middle. The arrows (edges) show control flow between blocks. They
+show which block runs next depending on a condition.
+
+Q1.2
+In callgraph.png, each node is a function. An arrow from A to B means
+function A calls function B. The start of the arrow is the caller, and
+the end is the callee. For example, `main` calls `factorial`,
+`factorial_rec`, and `printf`. `factorial_rec` has an arrow to itself,
+which means it is recursive.
+
+Q2.1A
+The internalize pass changes functions that are not public into
+internal functions. It replaces `define dso_local` with
+`define internal`. This allows better optimizations like removing
+unused code, because internal functions cannot be called from
+outside the program.
+
+Q2.1B
+All functions changed from `define dso_local` to `define internal`:
+`accumulate`, `main`, `get_matrix`, `mmadd`, `mmmul`, and
+`print_matrix`.
+
+Q2.1C
+Making `main` internal is wrong because `main` is the program entry
+point. The linker must be able to find it. The fix is to use
+`-internalize-public-api-list=main`. This keeps `main` as `dso_local`
+and makes other functions internal. The fixed result shows that
+`main` still has `dso_local`.
+
+Q2.2A
+The inline pass replaces a function call with the body of that
+function. This removes the cost of calling a function and allows
+more optimizations.
+
+Q2.2B
+In the original call graph, `main` calls `get_matrix` as a separate
+function. In the inlined version, this call is replaced by the
+body of `get_matrix` inside `main`. You can see this with the label
+`get_matrix.exit` inside `main`. The function that was inlined is
+`get_matrix`. The file `diff_inline.txt` also shows that the body of
+`get_matrix` is copied into `main` instead of a call. In the optimized
+call graph, `get_matrix` is no longer a separate callee of `main`.
+Some calls to `mmadd` were also partly inlined, shown by
+`mmadd.exit` inside `main`.
+
+Q2.3A
+Loop unrolling copies the loop body multiple times. This reduces
+the number of condition checks and branches. It can make the
+program faster but increases code size.
+
+Q2.3B
+In the original CFG, the inner loop in `accumulate` has one body
+block. It runs, increments the index, checks the condition
+`slt i32 %27, 10`, and loops back. In the unrolled version, the
+loop body is copied 10 times in a row. After each copy, the index
+is incremented and checked again before running the next copy.
+Each copy has its own increment and comparison. This means
+10 iterations are done before looping back. The outer loop in
+`main` is also unrolled.
+
+Q2.4A
+`mem2reg` moves variables from memory (`alloca`) into registers.
+This removes unnecessary loads and stores. When a value comes from
+different paths, it uses phi nodes to combine them.
+
+Q2.4B
+In the original version, `main` allocates six variables and stores
+values into them, then loads them again. In the `mem2reg` version,
+some of these allocations are removed. The return value and loop
+counter are gone. The loop counter is replaced by a phi node like
+`%.01 = phi i32 [ 0, %0 ], [ %32, %31 ]`. Some allocations remain,
+like structs and matrices, because `mem2reg` only works on simple
+variables.
+
+Q2.4C
+Simple variables like loop counters, temporary values, and return
+values are removed from the stack. Instead, phi nodes are used.
+For example, at the loop header in `main`, the counter `%.01` gets
+value 0 at the start and the incremented value when the loop
+repeats. This is standard SSA form.
+
+Q2.5A
+`instcombine` simplifies instructions. It replaces complex or
+unnecessary instruction sequences with simpler ones.
+
+Q2.5B
+In the original code, `accumulate` checks `if (index == MDIM)` by
+loading a value from memory and then comparing it. In the
+optimized version, the load is removed and the comparison uses
+the function argument directly. This works because the value was
+stored and not changed, so loading it again is unnecessary.
+`instcombine` detects this pattern and simplifies it.
+
+Q3
+Set 2 (`inline` + `mem2reg`) is the fastest at 0.228 seconds. Set 3
+(`mem2reg` + loop-unroll) is close at 0.245 seconds. Set 1
+(`inline` + loop-unroll) is the slowest at 0.391 seconds.
+
+Set 2 is fastest because `inline` exposes constant values, which
+helps further optimizations. `mem2reg` removes memory operations in
+loops, which makes execution faster. Set 1 is slower because loop
+unrolling is done without removing memory operations first. This
+means many loads and stores are still present, and the larger
+code size can hurt performance.
