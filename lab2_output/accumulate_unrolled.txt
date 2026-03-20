@@ -1,0 +1,200 @@
+define dso_local void @accumulate(ptr noundef %0, i32 noundef %1, i32 noundef %2) #0 {
+  %4 = alloca ptr, align 4
+  %5 = alloca i32, align 4
+  %6 = alloca i32, align 4
+  %7 = alloca i32, align 4
+  store ptr %0, ptr %4, align 4, !tbaa !9
+  store i32 %1, ptr %5, align 4, !tbaa !1
+  store i32 %2, ptr %6, align 4, !tbaa !1
+  %8 = load i32, ptr %5, align 4, !tbaa !1
+  %9 = icmp eq i32 %8, 10
+  br i1 %9, label %10, label %11
+
+10:                                               ; preds = %3
+  br label %106
+
+11:                                               ; preds = %3
+  %12 = load ptr, ptr %4, align 4, !tbaa !9
+  %13 = load i32, ptr %5, align 4, !tbaa !1
+  %14 = getelementptr inbounds [10 x i32], ptr %12, i32 %13
+  %15 = load i32, ptr %5, align 4, !tbaa !1
+  %16 = getelementptr inbounds [10 x i32], ptr %14, i32 0, i32 %15
+  %17 = load i32, ptr %16, align 4, !tbaa !1
+  %18 = load i32, ptr %6, align 4, !tbaa !1
+  %19 = add nsw i32 %18, %17
+  store i32 %19, ptr %6, align 4, !tbaa !1
+  %20 = load i32, ptr %6, align 4, !tbaa !1
+  %21 = load ptr, ptr %4, align 4, !tbaa !9
+  %22 = load i32, ptr %5, align 4, !tbaa !1
+  %23 = getelementptr inbounds [10 x i32], ptr %21, i32 %22
+  %24 = load i32, ptr %5, align 4, !tbaa !1
+  %25 = getelementptr inbounds [10 x i32], ptr %23, i32 0, i32 %24
+  store i32 %20, ptr %25, align 4, !tbaa !1
+  call void @llvm.lifetime.start.p0(ptr %7) #4
+  store i32 0, ptr %7, align 4, !tbaa !1
+  br label %26
+
+26:                                               ; preds = %99, %11
+  %27 = load i32, ptr %7, align 4, !tbaa !1
+  %28 = icmp slt i32 %27, 10
+  br i1 %28, label %30, label %29
+
+29:                                               ; preds = %92, %85, %78, %71, %64, %57, %50, %43, %36, %26
+  call void @llvm.lifetime.end.p0(ptr %7) #4
+  br label %101
+
+30:                                               ; preds = %26
+  %31 = load i32, ptr %6, align 4, !tbaa !1
+  %32 = load ptr, ptr %4, align 4, !tbaa !9
+  %33 = load i32, ptr %5, align 4, !tbaa !1
+  %34 = getelementptr inbounds [10 x i32], ptr %32, i32 %33
+  %35 = getelementptr inbounds [10 x i32], ptr %34, i32 0, i32 %27
+  store i32 %31, ptr %35, align 4, !tbaa !1
+  br label %36
+
+36:                                               ; preds = %30
+  %37 = add nsw i32 %27, 1
+  store i32 %37, ptr %7, align 4, !tbaa !1
+  %38 = load i32, ptr %7, align 4, !tbaa !1
+  %39 = icmp slt i32 %38, 10
+  br i1 %39, label %40, label %29
+
+40:                                               ; preds = %36
+  %41 = getelementptr inbounds [10 x i32], ptr %32, i32 %33
+  %42 = getelementptr inbounds [10 x i32], ptr %41, i32 0, i32 %38
+  store i32 %31, ptr %42, align 4, !tbaa !1
+  br label %43
+
+43:                                               ; preds = %40
+  %44 = add nsw i32 %38, 1
+  store i32 %44, ptr %7, align 4, !tbaa !1
+  %45 = load i32, ptr %7, align 4, !tbaa !1
+  %46 = icmp slt i32 %45, 10
+  br i1 %46, label %47, label %29
+
+47:                                               ; preds = %43
+  %48 = getelementptr inbounds [10 x i32], ptr %32, i32 %33
+  %49 = getelementptr inbounds [10 x i32], ptr %48, i32 0, i32 %45
+  store i32 %31, ptr %49, align 4, !tbaa !1
+  br label %50
+
+50:                                               ; preds = %47
+  %51 = add nsw i32 %45, 1
+  store i32 %51, ptr %7, align 4, !tbaa !1
+  %52 = load i32, ptr %7, align 4, !tbaa !1
+  %53 = icmp slt i32 %52, 10
+  br i1 %53, label %54, label %29
+
+54:                                               ; preds = %50
+  %55 = getelementptr inbounds [10 x i32], ptr %32, i32 %33
+  %56 = getelementptr inbounds [10 x i32], ptr %55, i32 0, i32 %52
+  store i32 %31, ptr %56, align 4, !tbaa !1
+  br label %57
+
+57:                                               ; preds = %54
+  %58 = add nsw i32 %52, 1
+  store i32 %58, ptr %7, align 4, !tbaa !1
+  %59 = load i32, ptr %7, align 4, !tbaa !1
+  %60 = icmp slt i32 %59, 10
+  br i1 %60, label %61, label %29
+
+61:                                               ; preds = %57
+  %62 = getelementptr inbounds [10 x i32], ptr %32, i32 %33
+  %63 = getelementptr inbounds [10 x i32], ptr %62, i32 0, i32 %59
+  store i32 %31, ptr %63, align 4, !tbaa !1
+  br label %64
+
+64:                                               ; preds = %61
+  %65 = add nsw i32 %59, 1
+  store i32 %65, ptr %7, align 4, !tbaa !1
+  %66 = load i32, ptr %7, align 4, !tbaa !1
+  %67 = icmp slt i32 %66, 10
+  br i1 %67, label %68, label %29
+
+68:                                               ; preds = %64
+  %69 = getelementptr inbounds [10 x i32], ptr %32, i32 %33
+  %70 = getelementptr inbounds [10 x i32], ptr %69, i32 0, i32 %66
+  store i32 %31, ptr %70, align 4, !tbaa !1
+  br label %71
+
+71:                                               ; preds = %68
+  %72 = add nsw i32 %66, 1
+  store i32 %72, ptr %7, align 4, !tbaa !1
+  %73 = load i32, ptr %7, align 4, !tbaa !1
+  %74 = icmp slt i32 %73, 10
+  br i1 %74, label %75, label %29
+
+75:                                               ; preds = %71
+  %76 = getelementptr inbounds [10 x i32], ptr %32, i32 %33
+  %77 = getelementptr inbounds [10 x i32], ptr %76, i32 0, i32 %73
+  store i32 %31, ptr %77, align 4, !tbaa !1
+  br label %78
+
+78:                                               ; preds = %75
+  %79 = add nsw i32 %73, 1
+  store i32 %79, ptr %7, align 4, !tbaa !1
+  %80 = load i32, ptr %7, align 4, !tbaa !1
+  %81 = icmp slt i32 %80, 10
+  br i1 %81, label %82, label %29
+
+82:                                               ; preds = %78
+  %83 = getelementptr inbounds [10 x i32], ptr %32, i32 %33
+  %84 = getelementptr inbounds [10 x i32], ptr %83, i32 0, i32 %80
+  store i32 %31, ptr %84, align 4, !tbaa !1
+  br label %85
+
+85:                                               ; preds = %82
+  %86 = add nsw i32 %80, 1
+  store i32 %86, ptr %7, align 4, !tbaa !1
+  %87 = load i32, ptr %7, align 4, !tbaa !1
+  %88 = icmp slt i32 %87, 10
+  br i1 %88, label %89, label %29
+
+89:                                               ; preds = %85
+  %90 = getelementptr inbounds [10 x i32], ptr %32, i32 %33
+  %91 = getelementptr inbounds [10 x i32], ptr %90, i32 0, i32 %87
+  store i32 %31, ptr %91, align 4, !tbaa !1
+  br label %92
+
+92:                                               ; preds = %89
+  %93 = add nsw i32 %87, 1
+  store i32 %93, ptr %7, align 4, !tbaa !1
+  %94 = load i32, ptr %7, align 4, !tbaa !1
+  %95 = icmp slt i32 %94, 10
+  br i1 %95, label %96, label %29
+
+96:                                               ; preds = %92
+  %97 = getelementptr inbounds [10 x i32], ptr %32, i32 %33
+  %98 = getelementptr inbounds [10 x i32], ptr %97, i32 0, i32 %94
+  store i32 %31, ptr %98, align 4, !tbaa !1
+  br label %99
+
+99:                                               ; preds = %96
+  %100 = add nsw i32 %94, 1
+  store i32 %100, ptr %7, align 4, !tbaa !1
+  br label %26, !llvm.loop !12
+
+101:                                              ; preds = %29
+  %102 = load ptr, ptr %4, align 4, !tbaa !9
+  %103 = load i32, ptr %5, align 4, !tbaa !1
+  %104 = add nsw i32 %103, 1
+  %105 = load i32, ptr %6, align 4, !tbaa !1
+  call void @accumulate(ptr noundef %102, i32 noundef %104, i32 noundef %105)
+  br label %106
+
+106:                                              ; preds = %101, %10
+  ret void
+}
+
+; Function Attrs: nocallback nofree nosync nounwind willreturn memory(argmem: readwrite)
+declare void @llvm.lifetime.start.p0(ptr captures(none)) #1
+
+; Function Attrs: nocallback nofree nosync nounwind willreturn memory(argmem: readwrite)
+declare void @llvm.lifetime.end.p0(ptr captures(none)) #1
+
+; Function Attrs: nounwind
+define dso_local i32 @main() #0 {
+  %1 = alloca i32, align 4
+  %2 = alloca %struct.config, align 4
+  %3 = alloca [10 x [10 x i32]], align 4
+  %4 = alloca ptr, align 4

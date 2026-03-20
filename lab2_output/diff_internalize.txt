@@ -1,0 +1,28 @@
+1c1
+< ; ModuleID = 'llvm-link'
+---
+> ; ModuleID = 'merged.ll'
+18c18
+< define dso_local void @accumulate(ptr noundef %0, i32 noundef %1, i32 noundef %2) #0 {
+---
+> define internal void @accumulate(ptr noundef %0, i32 noundef %1, i32 noundef %2) #0 {
+98c98
+< define dso_local i32 @main() #0 {
+---
+> define internal i32 @main() #0 {
+220c220
+< define dso_local ptr @get_matrix([2 x i32] %0) #0 {
+---
+> define internal ptr @get_matrix([2 x i32] %0) #0 {
+263c263
+< define dso_local void @mmadd(ptr noundef %0, ptr noundef %1) #0 {
+---
+> define internal void @mmadd(ptr noundef %0, ptr noundef %1) #0 {
+337c337
+< define dso_local void @mmmul(ptr noundef %0, ptr noundef %1) #0 {
+---
+> define internal void @mmmul(ptr noundef %0, ptr noundef %1) #0 {
+512c512
+< define dso_local void @print_matrix(ptr noundef %0) #0 {
+---
+> define internal void @print_matrix(ptr noundef %0) #0 {
